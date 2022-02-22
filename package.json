@@ -1,0 +1,22 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node dist/app.js",
+    "dev": "nodemon app.ts",
+    "build": "tsc -p ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@hapi/joi": "^17.1.1",
+    "@paypal/checkout-server-sdk": "^1.0.3",
+    "dotenv": "^16.0.0",
+    "fs": "0.0.1-security",
+    "socket.io": "^4.4.1",
+    "stripe": "^8.202.0"
+  }
+}
