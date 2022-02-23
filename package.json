@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.ts",
-    "build": "tsc -p ."
+    "start": "node build/index.js",
+    "build": "tsc -p .",
+    "postinstall": "npm run build"
   },
   "keywords": [],
   "author": "Georgi Trachev",
