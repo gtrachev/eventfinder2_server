@@ -101,11 +101,15 @@ io.on("connection", (socket: Socket) => {
     "joinRoom",
     async ({ userId, chatId }: { userId: string; chatId: string }) => {
       addUser(userId, socket.id);
-      const chat: HydratedDocument<ChatType> = await Chat.findById(chatId);
-      if (chat.type === "group") {
-        socket.join(`${chat._id}`);
-      } else {
-        socket.join(`${chat.members[0]} & ${chat.members[1]}`);
+      const chat: HydratedDocument<ChatType> | null = await Chat.findById(
+        chatId
+      );
+      if (chat) {
+        if (chat.type === "group") {
+          socket.join(`${chat._id}`);
+        } else {
+          socket.join(`${chat.members[0]} & ${chat.members[1]}`);
+        }
       }
       io.emit("getOnlineUsers", onlineUsers);
     }
