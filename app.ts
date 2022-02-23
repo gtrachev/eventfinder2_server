@@ -1,7 +1,7 @@
 if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config();
 }
 
+require("dotenv").config();
 import express, { Application, Request, Response, NextFunction } from "express";
 const app: Application = express();
 const https = require("https");
