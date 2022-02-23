@@ -29,15 +29,15 @@ import AppError from "./utils/AppError";
 import sessionConfig from "./utils/SessionConfig";
 import passport from "passport";
 const LocalStrategy = require("passport-local");
-import User from "../models/User";
+import User from "./models/User";
 import usersRouter from "./routers/userRouter";
 import reviewsRouter from "./routers/reviewRouter";
 import postsRouter from "./routers/postRouter";
 import notesRouter from "./routers/noteRouter";
 import eventsRouter from "./routers/eventRouter";
 import chatsRouter from "./routers/chatRouter";
-import Message from "../models/Message";
-import Chat from "../models/Chat";
+import Message from "./models/Message";
+import Chat from "./models/Chat";
 import { ChatType, MessageType } from "./utils/types/modelTypes";
 
 //connect to database

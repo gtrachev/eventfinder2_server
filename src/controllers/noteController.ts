@@ -1,7 +1,7 @@
 import { Response } from "express";
 import mongoose, { HydratedDocument } from "mongoose";
-import Note from "../../models/Note";
-import User from "../../models/User";
+import Note from "../models/Note";
+import User from "../models/User";
 import AppError from "../utils/AppError";
 import { NoteType, UserRequest } from "../utils/types/modelTypes";
 

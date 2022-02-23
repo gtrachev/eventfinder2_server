@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import mongoose, { HydratedDocument } from "mongoose";
 import { EventType, ReviewType, UserRequest } from "../utils/types/modelTypes";
-import Event from "../../models/Event";
-import Review from "../../models/Review";
+import Event from "../models/Event";
+import Review from "../models/Review";
 import AppError from "../utils/AppError";
 
 //POST - /api/reviews/create/:event_id

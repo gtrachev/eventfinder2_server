@@ -1,9 +1,9 @@
 import { Response } from "express";
 import { UserRequest } from "../utils/types/modelTypes";
-import Event from "../../models/Event";
+import Event from "../models/Event";
 import { HydratedDocument } from "mongoose";
 import { EventType, NoteType } from "../utils/types/modelTypes";
-import Note from "../../models/Note";
+import Note from "../models/Note";
 import { differenceOfDates } from "../utils/compareDates";
 import AppError from "../utils/AppError";
 

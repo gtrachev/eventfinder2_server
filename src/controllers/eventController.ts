@@ -1,7 +1,7 @@
 require("dotenv").config();
 import { Request, Response } from "express";
-import Event from "../../models/Event";
-import User from "../../models/User";
+import Event from "../models/Event";
+import User from "../models/User";
 import AppError from "../utils/AppError";
 import mongoose from "mongoose";
 import {
@@ -13,7 +13,7 @@ import {
 } from "../utils/types/modelTypes";
 import mbxGeocoding from "@mapbox/mapbox-sdk/services/geocoding";
 import { HydratedDocument, ObjectId } from "mongoose";
-import Chat from "../../models/Chat";
+import Chat from "../models/Chat";
 const mapBoxToken = process.env.MAP_BOX_TOKEN as string;
 const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
 const cloudinary = require("cloudinary").v2;

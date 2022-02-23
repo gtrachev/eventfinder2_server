@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import { HydratedDocument } from "mongoose";
-import Event from "../../../models/Event";
+import Event from "../../models/Event";
 import AppError from "../AppError";
 import { EventType } from "../types/modelTypes";
 
