@@ -11,7 +11,7 @@ const fs = require("fs");
 // const certificate = fs.readFileSync("sslcert/cert.pem", "utf8");
 // const credentials = { key: privateKey, cert: certificate };
 // const httpsServer = https.createServer(credentials, app);
-
+console.log(21)
 const io = require("socket.io")(httpServer, {
   cors: {
     origin: "http://localhost:3001",
@@ -183,6 +183,6 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
   console.log(`LISTENING ON PORT: ${PORT} `);
 });
