@@ -96,29 +96,29 @@ export const getInterestEvents = async (req: UserRequest, res: Response) => {
 
 //GET - /api/events
 //return all events
-// export const getEvents = async (req: Request, res: Response) => {
-//   const { search, price, interests, country, city, ageGroup } = req.query;
-//   const interestsArray =
-//     interests && typeof interests === "string" && interests.split(",");
-//   const events = await Event.find()
-//     .and([
-//       search?.length && typeof search === "string"
-//         ? { name: new RegExp(search, "gi") }
-//         : {},
-//       price ? { price: { $lte: price } } : {},
-//       interestsArray && interestsArray?.length
-//         ? { interestCategories: { $in: interestsArray } }
-//         : {},
-//       country?.length && typeof country === "string" ? { country } : {},
-//       city?.length && typeof city === "string" ? { city: city } : {},
-//       ageGroup?.length && typeof ageGroup === "string" ? { ageGroup } : {},
-//       { date: { $gte: new Date(Date.now()) } },
-//     ])
-//     .populate("author")
-//     .populate("attenders");
+export const getEvents = async (req: Request, res: Response) => {
+  const { search, price, interests, country, city, ageGroup } = req.query;
+  const interestsArray =
+    interests && typeof interests === "string" && interests.split(",");
+  const events = await Event.find()
+    .and([
+      search?.length && typeof search === "string"
+        ? { name: new RegExp(search, "gi") }
+        : {},
+      price ? { price: { $lte: price } } : {},
+      interestsArray && interestsArray?.length
+        ? { interestCategories: { $in: interestsArray } }
+        : {},
+      country?.length && typeof country === "string" ? { country } : {},
+      city?.length && typeof city === "string" ? { city: city } : {},
+      ageGroup?.length && typeof ageGroup === "string" ? { ageGroup } : {},
+      { date: { $gte: new Date(Date.now()) } },
+    ])
+    .populate("author")
+    .populate("attenders");
 
-//   res.status(200).json({ events });
-// };
+  res.status(200).json({ events });
+};
 
 //GET - /api/events/details/:event_id
 //return event details

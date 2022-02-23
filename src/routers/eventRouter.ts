@@ -34,7 +34,7 @@ eventsRouter.get(
 
 //GET - /api/events
 //return all events
-// eventsRouter.get("/", asyncWrap(eventController.getEvents));
+eventsRouter.get("/", asyncWrap(eventController.getEvents));
 
 //GET - /api/events/details/:event_id
 //return event details
