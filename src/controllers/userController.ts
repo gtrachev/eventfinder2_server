@@ -235,6 +235,7 @@ export const getRecommendedUsers = async (req: UserRequest, res: Response) => {
 //login user
 export const loginUser = (req: Request, res: Response) => {
   //login is handled in passport middleware, just send response
+  console.log(req);
   res.status(200).json({ user: req.user });
 };
 
