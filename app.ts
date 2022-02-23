@@ -5,13 +5,14 @@ if (process.env.NODE_ENV !== "production") {
 import express, { Application, Request, Response, NextFunction } from "express";
 const app: Application = express();
 const https = require("https");
+const httpServer = require("http").createServer(app);
 const fs = require("fs");
-const privateKey = fs.readFileSync("sslcert/key.pem", "utf8");
-const certificate = fs.readFileSync("sslcert/cert.pem", "utf8");
-const credentials = { key: privateKey, cert: certificate };
-const httpsServer = https.createServer(credentials, app);
+// const privateKey = fs.readFileSync("sslcert/key.pem", "utf8");
+// const certificate = fs.readFileSync("sslcert/cert.pem", "utf8");
+// const credentials = { key: privateKey, cert: certificate };
+// const httpsServer = https.createServer(credentials, app);
 
-const io = require("socket.io")(httpsServer, {
+const io = require("socket.io")(httpServer, {
   cors: {
     origin: "http://localhost:3001",
     methods: ["GET", "POST"],
@@ -127,7 +128,9 @@ io.on("connection", (socket: Socket) => {
       chatId: ObjectId;
       senderId: ObjectId;
     }) => {
-      const chat: HydratedDocument<ChatType> | null = await Chat.findById(chatId);
+      const chat: HydratedDocument<ChatType> | null = await Chat.findById(
+        chatId
+      );
       if (chat) {
         const newMessage: HydratedDocument<MessageType> = new Message({
           text: message,
@@ -180,6 +183,6 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 });
 
 const PORT = process.env.PORT || 3000;
-httpsServer.listen(PORT, () => {
+httpServer.listen(PORT, () => {
   console.log(`LISTENING ON PORT: ${PORT} `);
 });
