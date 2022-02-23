@@ -1,17 +1,10 @@
 if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
 }
 
-require("dotenv").config();
 import express, { Application, Request, Response, NextFunction } from "express";
 const app: Application = express();
-const https = require("https");
 const httpServer = require("http").createServer(app);
-const fs = require("fs");
-// const privateKey = fs.readFileSync("sslcert/key.pem", "utf8");
-// const certificate = fs.readFileSync("sslcert/cert.pem", "utf8");
-// const credentials = { key: privateKey, cert: certificate };
-// const httpsServer = https.createServer(credentials, app);
-console.log(21)
 const io = require("socket.io")(httpServer, {
   cors: {
     origin: "http://localhost:3000",
@@ -51,7 +44,7 @@ db.once("open", () => {
 
 //configure cors
 app.set("trust proxy", 1);
-app.use(cors({ credentials: true, origin: "http://localhost:3001" }));
+app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 
 //configure req.body
 app.use(express.urlencoded({ extended: true }));
