@@ -123,9 +123,7 @@ export const handleJoinEventChat = async (req: UserRequest, res: Response) => {
         //check if user has joined chat, if yes remove from chat room else add to chat room
         if (eventChat) {
           if (
-            currentUser.inChats.find((chat: ChatType) =>
-              eventChat._id.equals(chat)
-            )
+            currentUser.inChats.find((chat: ObjectId) => eventChat._id === chat)
           ) {
             //pull chat from users inCHats fields
             await currentUser.updateOne(
@@ -177,11 +175,11 @@ export const createUserChat = async (req: UserRequest, res: Response) => {
     const { member_id } = req.params;
     //validate object_id
     if (mongoose.isValidObjectId(member_id)) {
-      const member: HydratedDocument<UserType> | null = await User.findById(member_id);
+      const member: HydratedDocument<UserType> | null = await User.findById(
+        member_id
+      );
       if (member) {
-        const currentUser = await User.findById(
-          req.user._id
-        );
+        const currentUser = await User.findById(req.user._id);
         //check if there already is a chat between the two users, if yes, respond with error,
         //else create new chat
         if (

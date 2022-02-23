@@ -1,8 +1,8 @@
-import mongoose from "mongoose";
+import mongoose, { HydratedDocument } from "mongoose";
 import { NoteType } from "../utils/types/modelTypes";
 const Schema = mongoose.Schema;
 
-export const noteSchema = new Schema<NoteType>({
+export const noteSchema = new Schema<HydratedDocument<NoteType>>({
   body: {
     type: String,
     required: true,

@@ -15,7 +15,7 @@ const isEventAuthor = async (
       const event = await Event.findById(event_id).populate("author");
       //check if user is event author, if yes return next and continue
       if (event) {
-        if (event.author.equals(req.user)) {
+        if (event.author === req.user) {
           return next();
         }
         return res.status(401).json({ err_message: "Not owner of the event." });

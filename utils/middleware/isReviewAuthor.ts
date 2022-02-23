@@ -14,7 +14,7 @@ const isReviewAuthor = async (
     if (mongoose.isValidObjectId(review_id)) {
       const review = await Review.findById(review_id).populate("author");
       if (review) {
-        if (review.author.equals(req.user)) {
+        if (review.author === req.user) {
           return next();
         }
         return res

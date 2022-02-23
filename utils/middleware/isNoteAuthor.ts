@@ -15,7 +15,7 @@ const isNoteAuthor = async (
       const note = await Note.findById(note_id).populate("author");
       if (note) {
         //chek if user is note author
-        if (note.author.equals(req.user)) {
+        if (note.author === req.user) {
           return next();
         }
         return res.status(401).json({ message: "Not owner of the note." });
