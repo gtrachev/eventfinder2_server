@@ -20,7 +20,7 @@ export const getChatMessages = async (req: Request, res: Response) => {
     const { chat_id } = req.params;
     //validate object_id
     if (mongoose.isValidObjectId(chat_id)) {
-      const chat: HydratedDocument<ChatType> = await Chat.findById(
+      const chat: HydratedDocument<ChatType> | null = await Chat.findById(
         chat_id
       ).populate("messages");
       if (chat) {
@@ -41,7 +41,9 @@ export const creatMessage = async (req: UserRequest, res: Response) => {
   try {
     const { chat_id } = req.params;
     if (mongoose.isValidObjectId(chat_id)) {
-      const chat: HydratedDocument<ChatType> = await Chat.findById(chat_id);
+      const chat: HydratedDocument<ChatType> | null = await Chat.findById(
+        chat_id
+      );
       if (chat) {
         //check if user is a member of chat room
         if (
@@ -80,7 +82,9 @@ export const getChat = async (req: Request, res: Response) => {
     const { chat_id } = req.params;
     //validate object_id
     if (mongoose.isValidObjectId(chat_id)) {
-      const chat: HydratedDocument<ChatType> = await Chat.findById(chat_id)
+      const chat: HydratedDocument<ChatType> | null = await Chat.findById(
+        chat_id
+      )
         .populate("members")
         .populate({ path: "messages", populate: { path: "author" } })
         .populate({ path: "event", populate: { path: "author" } });
@@ -102,50 +106,59 @@ export const handleJoinEventChat = async (req: UserRequest, res: Response) => {
   try {
     const { event_id } = req.params;
     if (mongoose.isValidObjectId(event_id)) {
-      const event: HydratedDocument<EventType> = await Event.findById(event_id)
+      const event: HydratedDocument<EventType> | null = await Event.findById(
+        event_id
+      )
         .populate("author")
         .populate("reviews")
         .populate("attenders")
         .populate("chat");
       if (event) {
-        const currentUser: HydratedDocument<UserType> = await User.findById(
-          req.user._id
-        );
-        const eventChat = await Chat.findById(event.chat._id)
-          .populate("members")
-          .populate("messages")
-          .populate("event");
+        const currentUser = await User.findById(req.user._id);
+        const eventChat: HydratedDocument<ChatType> | null =
+          await Chat.findById(event.chat._id)
+            .populate("members")
+            .populate("messages")
+            .populate("event");
         //check if user has joined chat, if yes remove from chat room else add to chat room
-        if (currentUser.inChats.find((chat) => eventChat._id.equals(chat))) {
-          //pull chat from users inCHats fields
-          await currentUser.updateOne(
-            { $pull: { inChats: eventChat._id } },
-            { upsert: true }
-          );
-          //pull user from current chat's members
-          await eventChat.updateOne(
-            { $pull: { members: currentUser._id } },
-            { upsert: true }
-          );
-          return res.status(200).json({
-            removedMember: currentUser,
-            leftChat: eventChat,
-          });
+        if (eventChat) {
+          if (
+            currentUser.inChats.find((chat: ChatType) =>
+              eventChat._id.equals(chat)
+            )
+          ) {
+            //pull chat from users inCHats fields
+            await currentUser.updateOne(
+              { $pull: { inChats: eventChat._id } },
+              { upsert: true }
+            );
+            //pull user from current chat's members
+            await eventChat.updateOne(
+              { $pull: { members: currentUser._id } },
+              { upsert: true }
+            );
+            return res.status(200).json({
+              removedMember: currentUser,
+              leftChat: eventChat,
+            });
+          } else {
+            //push chat to current user's inChats field
+            await currentUser.updateOne(
+              { $push: { inChats: eventChat._id } },
+              { upsert: true }
+            );
+            //push user to current chat's members field
+            await eventChat.updateOne(
+              { $push: { members: currentUser._id } },
+              { upsert: true }
+            );
+            return res.status(200).json({
+              addedMember: currentUser,
+              joinedChat: eventChat,
+            });
+          }
         } else {
-          //push chat to current user's inChats field
-          await currentUser.updateOne(
-            { $push: { inChats: eventChat._id } },
-            { upsert: true }
-          );
-          //push user to current chat's members field
-          await eventChat.updateOne(
-            { $push: { members: currentUser._id } },
-            { upsert: true }
-          );
-          return res.status(200).json({
-            addedMember: currentUser,
-            joinedChat: eventChat,
-          });
+          return res.status(404).json({ err_message: "Event not found" });
         }
       }
       res.status(404).json({ err_message: "Event not found" });
@@ -164,9 +177,9 @@ export const createUserChat = async (req: UserRequest, res: Response) => {
     const { member_id } = req.params;
     //validate object_id
     if (mongoose.isValidObjectId(member_id)) {
-      const member: HydratedDocument<UserType> = await User.findById(member_id);
+      const member: HydratedDocument<UserType> | null = await User.findById(member_id);
       if (member) {
-        const currentUser: HydratedDocument<UserType> = await User.findById(
+        const currentUser = await User.findById(
           req.user._id
         );
         //check if there already is a chat between the two users, if yes, respond with error,
@@ -216,7 +229,7 @@ export const createUserChat = async (req: UserRequest, res: Response) => {
 // export const deleteChat = async (req: Request, res: Response) => {
 //   try {
 //     const { chat_id } = req.params;
-//     const deletedChat: HydratedDocument<ChatType> =
+//     const deletedChat: HydratedDocument<ChatType> | null =
 //       await Chat.findByIdAndDelete(chat_id);
 //     if (deletedChat) {
 //       res.status(200).json({ deletedChat });

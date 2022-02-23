@@ -14,7 +14,7 @@ export const isEventExpired = async (
     const { event_id = "" } = req.params;
     //validate object_id
     if (mongoose.isValidObjectId(event_id)) {
-      const event: HydratedDocument<EventType> = await Event.findById(event_id);
+      const event: HydratedDocument<EventType> | null = await Event.findById(event_id);
       if (event) {
         //check if the date of the event has passed the current date, if not return next and continue
         if (new Date(event.date) < new Date(Date.now())) {

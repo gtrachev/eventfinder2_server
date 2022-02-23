@@ -56,7 +56,7 @@ export const getLocalEvents = async (req: UserRequest, res: Response) => {
 //GET - /api/events/popular_events
 //return most popular events
 export const getPopularEvents = async (req: Request, res: Response) => {
-  const popularEvents: HydratedDocument<EventType>[] = await Event.find({
+  const popularEvents: HydratedDocument<EventType>[] | null = await Event.find({
     date: { $gte: new Date(Date.now()) },
   })
     .populate("author")
@@ -69,24 +69,28 @@ export const getPopularEvents = async (req: Request, res: Response) => {
 //GET - /api/events/interest_events
 //return events based on users interests
 export const getInterestEvents = async (req: UserRequest, res: Response) => {
-  const events: HydratedDocument<EventType>[] = await Event.find({
+  const events: HydratedDocument<EventType>[] | null = await Event.find({
     date: { $gte: new Date(Date.now()) },
   })
     .populate("author")
     .populate("attenders")
     .sort({ attenders: 1 });
   //get events with common interest categories as user
-  const interestEvents = events
-    .filter((event) => {
-      const commonInterests = event.interestCategories.filter((interest) => {
-        return req.user.interests.includes(interest);
-      });
-      return (
-        (req.user.interests.length <= 3 && commonInterests.length >= 1) ||
-        commonInterests.length >= 2
-      );
-    })
-    .slice(0, 19);
+  const interestEvents = !events
+    ? []
+    : events
+        .filter((event) => {
+          const commonInterests = event.interestCategories.filter(
+            (interest) => {
+              return req.user.interests.includes(interest);
+            }
+          );
+          return (
+            (req.user.interests.length <= 3 && commonInterests.length >= 1) ||
+            commonInterests.length >= 2
+          );
+        })
+        .slice(0, 19);
   res.status(200).json({ events: interestEvents });
 };
 
@@ -96,7 +100,7 @@ export const getEvents = async (req: Request, res: Response) => {
   const { search, price, interests, country, city, ageGroup } = req.query;
   const interestsArray =
     interests && typeof interests === "string" && interests.split(",");
-  const events: HydratedDocument<EventType>[] = await Event.find()
+  const events = await Event.find()
     .and([
       search?.length && typeof search === "string"
         ? { name: new RegExp(search, "gi") }
@@ -122,7 +126,7 @@ export const getDetails = async (req: Request, res: Response) => {
   try {
     const { event_id } = req.params;
     if (mongoose.isValidObjectId(event_id)) {
-      const event: HydratedDocument<EventType> = await Event.findById(event_id)
+      const event: HydratedDocument<EventType> | null = await Event.findById(event_id)
         .populate("author")
         .populate({
           path: "reviews",
@@ -153,11 +157,11 @@ export const handleAttend = async (req: UserRequest, res: Response) => {
     const { event_id } = req.params;
     //validate object_id
     if (mongoose.isValidObjectId(event_id)) {
-      const event: HydratedDocument<EventType> = await Event.findById(
+      const event: HydratedDocument<EventType> | null = await Event.findById(
         event_id
       ).populate("attenders");
       if (event) {
-        const user: HydratedDocument<UserType> = await User.findById(
+        const user = await User.findById(
           req.user._id
         );
         const attendingEvents = user.attending;
@@ -168,7 +172,7 @@ export const handleAttend = async (req: UserRequest, res: Response) => {
             event._id.equals(attendingEvent)
           )
         ) {
-          //pull event from current user's attending events 
+          //pull event from current user's attending events
           await user.updateOne(
             { $pull: { attending: event._id } },
             { upsert: true }
@@ -207,12 +211,12 @@ export const handleSave = async (req: UserRequest, res: Response) => {
     const { event_id } = req.params;
     //validate object_id
     if (mongoose.isValidObjectId(event_id)) {
-      const event: HydratedDocument<EventType> = await Event.findById(event_id)
+      const event: HydratedDocument<EventType> | null = await Event.findById(event_id)
         .populate("author")
         .populate("reviews")
         .populate("attenders");
       if (event) {
-        const user: HydratedDocument<UserType> = await User.findById(
+        const user = await User.findById(
           req.user._id
         );
         const savedEvents = user.savedEvents;
@@ -262,7 +266,7 @@ export const createEvent = async (req: UserRequest, res: Response) => {
   } else {
     newEvent.geometry = { type: "Point", coordinates: [23.33333, 42.7] };
   }
-  const user: HydratedDocument<UserType> = await User.findById(req.user._id);
+  const user = await User.findById(req.user._id);
   newEvent.author = user._id;
   //create and assign a chat to the event
   const eventChat: HydratedDocument<ChatType> = new Chat({
@@ -274,7 +278,7 @@ export const createEvent = async (req: UserRequest, res: Response) => {
   await eventChat.save();
   //add event author to the events chats
   await user.updateOne({ $push: { inChats: eventChat } }, { upsert: true });
-  //change the users last posted field 
+  //change the users last posted field
   //(this field determines whether a user can post an event in the canCreate middleware)
   user.lastPosted = new Date(Date.now());
   await user.save();
@@ -291,7 +295,7 @@ export const editEvent = async (req: UserRequest, res: Response) => {
     const { event_id } = req.params;
     if (mongoose.isValidObjectId(event_id)) {
       const { deletedImages, eventData } = req.body;
-      const editedEvent: HydratedDocument<EventType> =
+      const editedEvent: HydratedDocument<EventType> | null =
         await Event.findByIdAndUpdate(event_id, eventData)
           .populate("author")
           .populate("reviews")
@@ -325,7 +329,7 @@ export const deleteEvent = async (req: Request, res: Response) => {
   try {
     const { event_id } = req.params;
     if (mongoose.isValidObjectId(event_id)) {
-      const deletedEvent: HydratedDocument<EventType> =
+      const deletedEvent: HydratedDocument<EventType> | null =
         await Event.findByIdAndDelete(event_id);
       if (deletedEvent) {
         return res.status(200).json({ deletedEvent });

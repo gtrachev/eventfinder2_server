@@ -1,6 +1,6 @@
 require("dotenv").config();
 import { Request, Response } from "express";
-import { HydratedDocument } from "mongoose";
+import { HydratedDocument, ObjectId } from "mongoose";
 import User from "../models/User";
 import Event from "../models/Event";
 import AppError from "../utils/AppError";
@@ -13,10 +13,9 @@ const stripe = require("stripe")(`sk_test_51KRiOiEKyWrvmmLo7mahBY5U904vqbnY5Hx7J
 //GET - /api/user/current
 //return current user
 export const getUser = async (req: UserRequest, res: Response) => {
-  console.log(3)
   try {
     if (req.user) {
-      const user: HydratedDocument<UserType> = await User.findById(req.user._id)
+      const user = await User.findById(req.user._id)
         .populate({
           path: "attending",
           populate: {
@@ -83,7 +82,7 @@ export const getUserById = async (req: UserRequest, res: Response) => {
     const { user_id } = req.params;
     //validate object_id
     if (mongoose.isValidObjectId(user_id)) {
-      const user: HydratedDocument<UserType> = await User.findById(user_id)
+      const user = await User.findById(user_id)
         .populate({
           path: "attending",
           populate: {
@@ -154,7 +153,7 @@ export const getRecommendedUsers = async (req: UserRequest, res: Response) => {
         .populate("following");
 
       //get all users
-      const users: HydratedDocument<UserType[]> = await User.find()
+      const users = await User.find()
         .and([
           usernameSearch?.length && typeof usernameSearch === "string"
             ? { name: new RegExp(usernameSearch, "gi") }
@@ -167,12 +166,12 @@ export const getRecommendedUsers = async (req: UserRequest, res: Response) => {
 
       //get users based on same country
       const localUsers = users.filter(
-        (user) => user.country !== currentUser.country
+        (user: UserType) => user.country !== currentUser.country
       );
 
       //get users based on mutual interests
-      const interestUsers = localUsers.filter((user) => {
-        const commonInterests = user.interests.filter((interest) => {
+      const interestUsers = localUsers.filter((user: UserType) => {
+        const commonInterests = user.interests.filter((interest: string) => {
           return currentUser.interests.includes(interest);
         });
         return (
@@ -184,7 +183,7 @@ export const getRecommendedUsers = async (req: UserRequest, res: Response) => {
       //get users, which are followed by the current users followers,
       //and sort them based on the number of mutual followers
       const mutualFollowerUsers = localUsers
-        .map((user) => {
+        .map((user: UserType) => {
           const followingUsers = currentUser.following;
           let followerCount = 0;
           followingUsers.forEach((followingUser: UserType) => {
@@ -196,17 +195,17 @@ export const getRecommendedUsers = async (req: UserRequest, res: Response) => {
             return { mutualFollowerUser: user, followerCount };
           }
         })
-        .sort((a, b) => a!.followerCount - b!.followerCount)
-        .filter((el) => el)
-        .map((el) => el?.mutualFollowerUser);
+        .sort((a: any, b: any) => a!.followerCount - b!.followerCount)
+        .filter((el: any) => el)
+        .map((el: any) => el?.mutualFollowerUser);
 
       //put all users in array, limit to 30, making sure to remove duplicates
       const keys = ["_id"];
       const recommendedUsers = [
         ...mutualFollowerUsers,
         ...interestUsers,
-        ...localUsers.sort((a, b) => a.followers.length - b.followers.length),
-        ...users.sort((a, b) => a.followers.length - b.followers.length),
+        ...localUsers.sort((a: any, b: any) => a.followers.length - b.followers.length),
+        ...users.sort((a: any, b: any) => a.followers.length - b.followers.length),
       ].filter(
         (
           (s) => (o: any) =>
@@ -391,7 +390,7 @@ export const handleFollow = async (req: UserRequest, res: Response) => {
     const { account_id = "" } = req.params;
     //validate object_id
     if (mongoose.isValidObjectId(account_id)) {
-      const account: HydratedDocument<UserType> = await User.findById(
+      const account: HydratedDocument<UserType> | null = await User.findById(
         account_id
       )
         .populate("attending")
@@ -399,12 +398,12 @@ export const handleFollow = async (req: UserRequest, res: Response) => {
         .populate("following")
         .populate("savedEvents");
       if (account) {
-        const user: HydratedDocument<UserType> = await User.findById(
+        const user = await User.findById(
           req.user._id
         );
         //check if user already follows account, if yes - unfollow, else follow
         if (
-          user.following.find((followedUserId) =>
+          user.following.find((followedUserId: ObjectId) =>
             account._id.equals(followedUserId)
           )
         ) {
@@ -449,11 +448,9 @@ export const handleFollow = async (req: UserRequest, res: Response) => {
 //GET - /api/user/checkUser
 //check if user data is valid
 export const checkUser = async (req: Request, res: Response) => {
-  console.log(12)
   const user = req.body;
-  console.log(1)
 
-  const foundUser: HydratedDocument<UserType> = await User.findOne({
+  const foundUser: HydratedDocument<UserType> | null = await User.findOne({
     username: user.username,
     password: user.password,
   });
@@ -466,7 +463,7 @@ export const checkUser = async (req: Request, res: Response) => {
 export const checkUsername = async (req: Request, res: Response) => {
   const { username } = req.params;
 
-  const foundUser: HydratedDocument<UserType> = await User.findOne({
+  const foundUser: HydratedDocument<UserType> | null = await User.findOne({
     username,
   });
   res.status(200).json({ availableUsername: foundUser ? false : true });

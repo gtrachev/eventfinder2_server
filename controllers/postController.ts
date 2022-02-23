@@ -17,7 +17,7 @@ export const getFollowingPosts = async (req: UserRequest, res: Response) => {
     //get events from accounts, followed by user
     const followingEvents: any = await Promise.all(
       followingUsers.map(async (followingUser) => {
-        const followingUsersEvents: HydratedDocument<EventType>[] =
+        const followingUsersEvents: HydratedDocument<EventType>[] | null =
           await Event.find()
             .and([
               { author: followingUser },
@@ -25,7 +25,7 @@ export const getFollowingPosts = async (req: UserRequest, res: Response) => {
             ])
             .populate("author")
             .populate("attenders");
-        return followingUsersEvents;
+        return followingUsersEvents ? followingUsersEvents : [];
       })
     );
     //filter the events, only to those posted in the last fromDays
@@ -38,7 +38,7 @@ export const getFollowingPosts = async (req: UserRequest, res: Response) => {
     //get notes from accounts, followed by user
     const followingNotes: any = await Promise.all(
       followingUsers.map(async (followingUser) => {
-        const followingUsersNotes: HydratedDocument<NoteType>[] =
+        const followingUsersNotes: HydratedDocument<NoteType>[] | null =
           await Note.find({
             author: followingUser,
           })
@@ -50,7 +50,7 @@ export const getFollowingPosts = async (req: UserRequest, res: Response) => {
               },
             })
             .populate("likedBy");
-        return followingUsersNotes;
+        return followingUsersNotes ? followingUsersNotes : [];
       })
     );
     //filter those notes, only to those posted in the last fromDays

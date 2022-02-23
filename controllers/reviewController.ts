@@ -12,11 +12,11 @@ export const createReview = async (req: UserRequest, res: Response) => {
     const { event_id } = req.params;
     //validate object_id
     if (mongoose.isValidObjectId(event_id)) {
-      const event: HydratedDocument<EventType> = await Event.findById(event_id);
+      const event: HydratedDocument<EventType> | null = await Event.findById(event_id);
       if (event) {
         const reviewData = req.body;
         //create review
-        const newReview: HydratedDocument<ReviewType> = new Review(reviewData);
+        const newReview = new Review(reviewData);
         //assign review author
         newReview.author = req.user._id;
         await newReview.save();
@@ -40,7 +40,7 @@ export const deleteReview = async (req: Request, res: Response) => {
     //validate object_id
     if (mongoose.isValidObjectId(review_id)) {
       //delete review
-      const deletedReview: HydratedDocument<ReviewType> =
+      const deletedReview: HydratedDocument<ReviewType> | null =
         await Review.findByIdAndDelete(review_id);
       if (deletedReview) {
         return res.status(200).json({ deletedReview });

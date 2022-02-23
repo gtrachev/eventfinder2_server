@@ -127,7 +127,7 @@ io.on("connection", (socket: Socket) => {
       chatId: ObjectId;
       senderId: ObjectId;
     }) => {
-      const chat: HydratedDocument<ChatType> = await Chat.findById(chatId);
+      const chat: HydratedDocument<ChatType> | null = await Chat.findById(chatId);
       if (chat) {
         const newMessage: HydratedDocument<MessageType> = new Message({
           text: message,
@@ -139,7 +139,7 @@ io.on("connection", (socket: Socket) => {
           { $push: { messages: newMessage._id } },
           { upsert: true }
         );
-        const populatedMessage: HydratedDocument<MessageType> =
+        const populatedMessage: HydratedDocument<MessageType> | null =
           await Message.findById(newMessage._id).populate("author");
         if (chat.type === "group") {
           io.to(`${chat._id}`).emit("getMessage", populatedMessage);

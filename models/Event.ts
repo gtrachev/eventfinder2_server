@@ -96,7 +96,7 @@ const eventSchema = new Schema<EventType>({
 //delete reviews, messages and images from deleted event
 eventSchema.post("findOneAndDelete", async (deletedEvent) => {
   await Chat.findByIdAndDelete(deletedEvent.chat);
-  const reviews: [HydratedDocument<ReviewType>] = await Review.find({
+  const reviews: [HydratedDocument<ReviewType>] | null = await Review.find({
     event: deletedEvent._id,
   }).populate("author");
   if (reviews) {
@@ -104,7 +104,7 @@ eventSchema.post("findOneAndDelete", async (deletedEvent) => {
       await Review.deleteOne({ _id: review._id });
     });
   }
-  const messages: [HydratedDocument<MessageType>] = await Message.find({
+  const messages: [HydratedDocument<MessageType>] | null = await Message.find({
     event: deletedEvent._id,
   });
   if (messages) {

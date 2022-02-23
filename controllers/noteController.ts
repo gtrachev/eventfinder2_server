@@ -33,7 +33,7 @@ export const deleteNote = async (req: UserRequest, res: Response) => {
     //validate object_id
     if (mongoose.isValidObjectId(note_id)) {
       //delete note
-      const deletedNote: HydratedDocument<NoteType> =
+      const deletedNote: HydratedDocument<NoteType> | null =
         await Note.findByIdAndDelete(note_id);
       if (deletedNote) {
         return res.status(200).json({ deletedNote });
