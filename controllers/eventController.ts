@@ -283,7 +283,7 @@ export const createEvent = async (req: UserRequest, res: Response) => {
   user.lastPosted = new Date(Date.now());
   await user.save();
   //assign the created chat to the new event
-  newEvent.chat = eventChat._id;
+  newEvent.chat = eventChat;
   await newEvent.save();
   res.status(200).json({ newEvent });
 };
