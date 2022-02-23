@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import mongoose, { HydratedDocument, ObjectId } from "mongoose";
-import Chat from "../models/Chat";
-import Event from "../models/Event";
-import Message from "../models/Message";
-import User from "../models/User";
+import Chat from "../../models/Chat";
+import Event from "../../models/Event";
+import Message from "../../models/Message";
+import User from "../../models/User";
 import AppError from "../utils/AppError";
 import {
   ChatType,

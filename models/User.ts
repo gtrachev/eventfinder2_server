@@ -2,8 +2,8 @@ require("dotenv").config();
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 import passportLocalMongoose from "passport-local-mongoose";
-import { ImageType, UserType } from "../utils/types/modelTypes";
-import { UserTiersEnum } from "../utils/types/userTiers";
+import { ImageType, UserType } from "../src/utils/types/modelTypes";
+import { UserTiersEnum } from "../src/utils/types/userTiers";
 
 const profileImgSchema = new Schema<ImageType>({
   path: { type: String, required: true },

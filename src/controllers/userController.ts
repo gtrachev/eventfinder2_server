@@ -1,11 +1,11 @@
 require("dotenv").config();
 import { Request, Response } from "express";
 import { HydratedDocument, ObjectId } from "mongoose";
-import User from "../models/User";
-import Event from "../models/Event";
+import User from "../../models/User";
+import Event from "../../models/Event";
 import AppError from "../utils/AppError";
 import { UserRequest, UserType } from "../utils/types/modelTypes";
-import Note from "../models/Note";
+import Note from "../../models/Note";
 import mongoose from "mongoose";
 import { UserTiersTypes } from "../utils/types/userTiers";
 const stripe = require("stripe")(

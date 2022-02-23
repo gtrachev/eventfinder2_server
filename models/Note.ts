@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { NoteType } from "../utils/types/modelTypes";
+import { NoteType } from "../src/utils/types/modelTypes";
 const Schema = mongoose.Schema;
 
 export const noteSchema = new Schema<NoteType>({

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
-import Note from "../../models/Note";
+import Note from "../../../models/Note";
 import AppError from "../AppError";
 
 const isNoteAuthor = async (

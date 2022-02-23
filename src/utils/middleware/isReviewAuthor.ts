@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
-import Review from "../../models/Review";
+import Review from "../../../models/Review";
 import AppError from "../AppError";
 
 const isReviewAuthor = async (

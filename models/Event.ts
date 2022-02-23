@@ -5,7 +5,7 @@ import {
   ImageType,
   MessageType,
   ReviewType,
-} from "../utils/types/modelTypes";
+} from "../src/utils/types/modelTypes";
 import Chat from "./Chat";
 import Message from "./Message";
 import Review from "./Review";
