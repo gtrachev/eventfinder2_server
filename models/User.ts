@@ -10,7 +10,7 @@ const profileImgSchema = new Schema<ImageType>({
   filename: { type: String, required: true },
 });
 
-export const userSchema = new Schema<UserType>({
+export const userSchema = new Schema({
   email: {
     type: String,
     required: true,
