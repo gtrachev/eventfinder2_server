@@ -1,5 +1,5 @@
 require("dotenv").config();
-import mongoose, { HydratedDocument } from "mongoose";
+import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 import passportLocalMongoose from "passport-local-mongoose";
 import { ImageType, UserType } from "../utils/types/modelTypes";
@@ -10,7 +10,7 @@ const profileImgSchema = new Schema<ImageType>({
   filename: { type: String, required: true },
 });
 
-export const userSchema = new Schema<HydratedDocument<UserType>>({
+export const userSchema = new Schema<UserType>({
   email: {
     type: String,
     required: true,

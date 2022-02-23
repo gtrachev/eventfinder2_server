@@ -1,8 +1,8 @@
-import mongoose, { HydratedDocument } from "mongoose";
+import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 import { ChatType } from "../utils/types/modelTypes";
 
-const ChatSchema = new Schema<HydratedDocument<ChatType>>(
+const ChatSchema = new Schema<ChatType>(
   {
     type: {
       type: String,

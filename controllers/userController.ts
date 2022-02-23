@@ -8,7 +8,9 @@ import { UserRequest, UserType } from "../utils/types/modelTypes";
 import Note from "../models/Note";
 import mongoose from "mongoose";
 import { UserTiersTypes } from "../utils/types/userTiers";
-const stripe = require("stripe")(`sk_test_51KRiOiEKyWrvmmLo7mahBY5U904vqbnY5Hx7JNDZSGZTsR2EX1Q7XkQhXK0KieJUb5npuy25QaILg4PgRQy3Hccr00Ngs7z7ap`);
+const stripe = require("stripe")(
+  `sk_test_51KRiOiEKyWrvmmLo7mahBY5U904vqbnY5Hx7JNDZSGZTsR2EX1Q7XkQhXK0KieJUb5npuy25QaILg4PgRQy3Hccr00Ngs7z7ap`
+);
 
 //GET - /api/user/current
 //return current user
@@ -66,7 +68,9 @@ export const getUser = async (req: UserRequest, res: Response) => {
         .populate("likedBy");
       //combine notes and events and sort array from newer to older
       const userPosts = [...userEvents, ...userNotes].sort((a, b) => {
-        return b.created_at - a.created_at;
+        return (
+          new Date(b.created_at).valueOf() - new Date(a.created_at).valueOf()
+        );
       });
 
       return res.status(200).json({ user, userPosts });
@@ -126,7 +130,9 @@ export const getUserById = async (req: UserRequest, res: Response) => {
         .populate("likedBy");
       //combine notes and events and sort from newer to older
       const userPosts = [...userEvents, ...userNotes].sort((a, b) => {
-        return b.created_at - a.created_at;
+        return (
+          new Date(b.created_at).valueOf() - new Date(a.created_at).valueOf()
+        );
       });
 
       if (user) {
@@ -204,8 +210,12 @@ export const getRecommendedUsers = async (req: UserRequest, res: Response) => {
       const recommendedUsers = [
         ...mutualFollowerUsers,
         ...interestUsers,
-        ...localUsers.sort((a: any, b: any) => a.followers.length - b.followers.length),
-        ...users.sort((a: any, b: any) => a.followers.length - b.followers.length),
+        ...localUsers.sort(
+          (a: any, b: any) => a.followers.length - b.followers.length
+        ),
+        ...users.sort(
+          (a: any, b: any) => a.followers.length - b.followers.length
+        ),
       ].filter(
         (
           (s) => (o: any) =>
@@ -398,13 +408,11 @@ export const handleFollow = async (req: UserRequest, res: Response) => {
         .populate("following")
         .populate("savedEvents");
       if (account) {
-        const user = await User.findById(
-          req.user._id
-        );
+        const user = await User.findById(req.user._id);
         //check if user already follows account, if yes - unfollow, else follow
         if (
-          user.following.find((followedUserId: ObjectId) =>
-            account._id === followedUserId
+          user.following.find(
+            (followedUserId: ObjectId) => account._id === followedUserId
           )
         ) {
           //update current user

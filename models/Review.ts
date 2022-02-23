@@ -1,8 +1,8 @@
-import mongoose, { HydratedDocument } from "mongoose";
+import mongoose from "mongoose";
 import { ReviewType } from "../utils/types/modelTypes";
 const Schema = mongoose.Schema;
 
-const reviewSchema = new Schema<HydratedDocument<ReviewType>>({
+const reviewSchema = new Schema<ReviewType>({
   text: {
     type: String,
     required: true,

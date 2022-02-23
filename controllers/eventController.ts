@@ -45,8 +45,8 @@ export const getLocalEvents = async (req: UserRequest, res: Response) => {
   const keys = ["_id"];
   const removedDuplicates = [...localEvents, ...countryEvents].filter(
     (
-      (s) => (o) =>
-        ((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
+      (s: any) => (o: any) =>
+        ((k: any) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
     )(new Set())
   );
 
@@ -169,7 +169,7 @@ export const handleAttend = async (req: UserRequest, res: Response) => {
         if (
           attendingEvents.length &&
           attendingEvents.find((attendingEvent: ObjectId) =>
-            event._id.equals(attendingEvent)
+            event._id === attendingEvent
           )
         ) {
           //pull event from current user's attending events
@@ -224,7 +224,7 @@ export const handleSave = async (req: UserRequest, res: Response) => {
         if (
           savedEvents.length &&
           savedEvents.find((savedEvent: ObjectId) =>
-            event._id.equals(savedEvent)
+            event._id === savedEvent
           )
         ) {
           //pull event from user's saved events

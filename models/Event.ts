@@ -16,7 +16,7 @@ const imageSchema = new Schema<ImageType>({
   path: String,
 });
 
-const eventSchema = new Schema<HydratedDocument<EventType>>({
+const eventSchema = new Schema<EventType>({
   name: {
     type: String,
     required: true,
