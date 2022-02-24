@@ -7,7 +7,7 @@ const app: Application = express();
 const httpServer = require("http").createServer(app);
 const io = require("socket.io")(httpServer, {
   cors: {
-    origin: "http://localho.st:3000",
+    origin: "http://localhost:3000",
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -44,7 +44,7 @@ db.once("open", () => {
 
 //configure cors
 app.set("trust proxy", 1);
-app.use(cors({ credentials: true, origin: "http://localho.st:3000" }));
+app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 
 //configure req.body
 app.use(express.urlencoded({ extended: true }));
