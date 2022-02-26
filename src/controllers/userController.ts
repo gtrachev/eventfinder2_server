@@ -242,7 +242,6 @@ export const loginUser = (req: Request, res: Response) => {
 //POST - /api/user/register
 //register user
 export const registerUser = async (req: Request, res: Response) => {
-  console.log(req.body);
   try {
     const {
       username,
@@ -348,7 +347,7 @@ export const registerUser = async (req: Request, res: Response) => {
       req.login(registeredUser, (err) => {
         if (err) {
           res
-            .status(500)
+            .status(400)
             .json({ err_message: "There was a problem logging you in." });
         } else {
           res.status(200).json({ user: registeredUser });
