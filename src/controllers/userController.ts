@@ -242,6 +242,7 @@ export const loginUser = (req: Request, res: Response) => {
 //POST - /api/user/register
 //register user
 export const registerUser = async (req: Request, res: Response) => {
+  console.log(req.body);
   try {
     const {
       username,
