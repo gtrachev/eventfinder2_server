@@ -76,7 +76,7 @@ passport.deserializeUser(User.deserializeUser());
 //SOCKET.IO
 let onlineUsers: { userId: any; socketId: string }[] = [];
 
-//add to online users
+//add to the online users
 const addUser = (userId: string, socketId: string) => {
   !onlineUsers.find((onlineUser) => onlineUser.userId === userId) &&
     onlineUsers.push({ userId, socketId });
