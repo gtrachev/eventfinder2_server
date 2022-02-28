@@ -53,11 +53,11 @@ export const getUser = async (req: UserRequest, res: Response) => {
         });
       //get events posted by user
       const userEvents = await Event.find()
-        .and([{ author: user._id }])
+        .and([{ author: req.user._id }])
         .populate("author")
         .populate("attenders");
       //get notes posted by user
-      const userNotes = await Note.find({ author: user._id })
+      const userNotes = await Note.find({ author: req.user._id })
         .populate("author")
         .populate({
           path: "shared_event",
@@ -115,12 +115,12 @@ export const getUserById = async (req: UserRequest, res: Response) => {
         .populate("following");
       //get user by id events
       const userEvents = await Event.find()
-        .and([{ author: user._id }, { date: { $gte: new Date(Date.now()) } }])
+        .and([{ author: user_id }, { date: { $gte: new Date(Date.now()) } }])
         .populate("author")
         .populate("reviews")
         .populate("attenders");
       //get user by id notes
-      const userNotes = await Note.find({ author: user._id })
+      const userNotes = await Note.find({ author: user_id })
         .populate("author")
         .populate({
           path: "shared_event",
