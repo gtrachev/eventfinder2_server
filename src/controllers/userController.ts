@@ -68,11 +68,12 @@ export const getUser = async (req: UserRequest, res: Response) => {
         .populate("likedBy");
       console.log(userEvents, userNotes);
       //combine notes and events and sort array from newer to older
-      const userPosts = [...userEvents, ...userNotes].sort((a, b) => {
-        return (
-          new Date(b.created_at).valueOf() - new Date(a.created_at).valueOf()
-        );
-      });
+      // const userPosts = [...userEvents, ...userNotes].sort((a, b) => {
+      //   return (
+      //     new Date(b.created_at).valueOf() - new Date(a.created_at).valueOf()
+      //   );
+      // });
+      const userPosts = await Event.find({});
 
       return res.status(200).json({ user, userPosts });
     }
