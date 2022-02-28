@@ -15,5 +15,5 @@ export const validateBodyData = (
     return next();
   }
   const err_message = error.details.map((el) => el.message).join(", ");
-  throw new AppError(err_message, 400);
+  res.status(400).json({ err_message });
 };
