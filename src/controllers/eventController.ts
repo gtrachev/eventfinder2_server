@@ -56,9 +56,12 @@ export const getLocalEvents = async (req: UserRequest, res: Response) => {
 //GET - /api/events/popular_events
 //return most popular events
 export const getPopularEvents = async (req: Request, res: Response) => {
-  const popularEvents: HydratedDocument<EventType>[] | null = await Event.find({
-    date: { $gte: new Date(Date.now()) },
-  })
+  const popularEvents: HydratedDocument<EventType>[] | null = await Event.find()
+    .and([
+      {
+        date: { $gte: new Date(Date.now()) },
+      },
+    ])
     .populate("author")
     .populate("attenders")
     .sort({ attenders: 1 })
@@ -69,9 +72,12 @@ export const getPopularEvents = async (req: Request, res: Response) => {
 //GET - /api/events/interest_events
 //return events based on users interests
 export const getInterestEvents = async (req: UserRequest, res: Response) => {
-  const events: HydratedDocument<EventType>[] | null = await Event.find({
-    date: { $gte: new Date(Date.now()) },
-  })
+  const events: HydratedDocument<EventType>[] | null = await Event.find()
+    .and([
+      {
+        date: { $gte: new Date(Date.now()) },
+      },
+    ])
     .populate("author")
     .populate("attenders")
     .sort({ attenders: 1 });
@@ -126,7 +132,9 @@ export const getDetails = async (req: Request, res: Response) => {
   try {
     const { event_id } = req.params;
     if (mongoose.isValidObjectId(event_id)) {
-      const event: HydratedDocument<EventType> | null = await Event.findById(event_id)
+      const event: HydratedDocument<EventType> | null = await Event.findById(
+        event_id
+      )
         .populate("author")
         .populate({
           path: "reviews",
@@ -161,15 +169,13 @@ export const handleAttend = async (req: UserRequest, res: Response) => {
         event_id
       ).populate("attenders");
       if (event) {
-        const user = await User.findById(
-          req.user._id
-        );
+        const user = await User.findById(req.user._id);
         const attendingEvents = user.attending;
         //check if user is attending event, if yes unattend, else attend
         if (
           attendingEvents.length &&
-          attendingEvents.find((attendingEvent: ObjectId) =>
-            event._id === attendingEvent
+          attendingEvents.find(
+            (attendingEvent: ObjectId) => event._id === attendingEvent
           )
         ) {
           //pull event from current user's attending events
@@ -211,21 +217,19 @@ export const handleSave = async (req: UserRequest, res: Response) => {
     const { event_id } = req.params;
     //validate object_id
     if (mongoose.isValidObjectId(event_id)) {
-      const event: HydratedDocument<EventType> | null = await Event.findById(event_id)
+      const event: HydratedDocument<EventType> | null = await Event.findById(
+        event_id
+      )
         .populate("author")
         .populate("reviews")
         .populate("attenders");
       if (event) {
-        const user = await User.findById(
-          req.user._id
-        );
+        const user = await User.findById(req.user._id);
         const savedEvents = user.savedEvents;
         //check if user has already saved the event, if yes, unsave else save
         if (
           savedEvents.length &&
-          savedEvents.find((savedEvent: ObjectId) =>
-            event._id === savedEvent
-          )
+          savedEvents.find((savedEvent: ObjectId) => event._id === savedEvent)
         ) {
           //pull event from user's saved events
           await user.updateOne(
