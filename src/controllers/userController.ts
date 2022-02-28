@@ -53,7 +53,7 @@ export const getUser = async (req: UserRequest, res: Response) => {
         });
       //get events posted by user
       const userEvents = await Event.find()
-        .and([{ author: user._id }, { date: { $gte: new Date(Date.now()) } }])
+        .and([{ author: user }, { date: { $gte: new Date(Date.now()) } }])
         .populate("author")
         .populate("attenders");
       //get notes posted by user
