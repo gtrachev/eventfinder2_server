@@ -73,7 +73,7 @@ export const getUser = async (req: UserRequest, res: Response) => {
       //     new Date(b.created_at).valueOf() - new Date(a.created_at).valueOf()
       //   );
       // });
-      const userPosts = await Event.find({});
+      const userPosts = userEvents;
 
       return res.status(200).json({ user, userPosts });
     }
