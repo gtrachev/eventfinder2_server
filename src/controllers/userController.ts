@@ -53,7 +53,7 @@ export const getUser = async (req: UserRequest, res: Response) => {
         });
       //get events posted by user
       const userEvents = await Event.find()
-        .and([{ author: user }, { date: { $gte: new Date(Date.now()) } }])
+        .and([{ author: user._id }])
         .populate("author")
         .populate("attenders");
       //get notes posted by user
@@ -68,12 +68,11 @@ export const getUser = async (req: UserRequest, res: Response) => {
         .populate("likedBy");
       console.log(userEvents, userNotes);
       //combine notes and events and sort array from newer to older
-      // const userPosts = [...userEvents, ...userNotes].sort((a, b) => {
-      //   return (
-      //     new Date(b.created_at).valueOf() - new Date(a.created_at).valueOf()
-      //   );
-      // });
-      const userPosts = userEvents;
+      const userPosts = [...userEvents, ...userNotes].sort((a, b) => {
+        return (
+          new Date(b.created_at).valueOf() - new Date(a.created_at).valueOf()
+        );
+      });
 
       return res.status(200).json({ user, userPosts });
     }
