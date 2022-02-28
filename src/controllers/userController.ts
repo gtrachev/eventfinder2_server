@@ -66,6 +66,7 @@ export const getUser = async (req: UserRequest, res: Response) => {
           },
         })
         .populate("likedBy");
+      console.log(userEvents, userNotes);
       //combine notes and events and sort array from newer to older
       const userPosts = [...userEvents, ...userNotes].sort((a, b) => {
         return (
