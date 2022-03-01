@@ -1,4 +1,4 @@
-import { SessionOptions } from "express-session";
+import { CookieOptions, SessionOptions } from "express-session";
 const MongoStore = require("connect-mongo");
 
 const dbURL = process.env.DB_URL || "mongodb://localhost:27017/eventfinder2";
@@ -16,7 +16,19 @@ const sessionStore = MongoStore.create({
 sessionStore.on("error", (e: Error) => {
   console.log("SESSION STORE ERROR!", e);
 });
-
+const cookieOptions: CookieOptions =
+  process.env.NODE_ENV !== "production"
+    ? {
+        httpOnly: true,
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+      }
+    : {
+        secure: true,
+        sameSite: "none",
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+      };
 //configure session options
 const sessionConfig: SessionOptions = {
   store: sessionStore,
@@ -25,10 +37,7 @@ const sessionConfig: SessionOptions = {
   resave: false,
   saveUninitialized: true,
   cookie: {
-    secure: true,
-    sameSite: "none",
-    expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
-    maxAge: 1000 * 60 * 60 * 24 * 7,
+    ...cookieOptions,
   },
 };
 

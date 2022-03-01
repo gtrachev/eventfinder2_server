@@ -66,7 +66,6 @@ export const getUser = async (req: UserRequest, res: Response) => {
           },
         })
         .populate("likedBy");
-      console.log(userEvents, userNotes);
       //combine notes and events and sort array from newer to older
       const userPosts = [...userEvents, ...userNotes].sort((a, b) => {
         return (
@@ -236,7 +235,6 @@ export const getRecommendedUsers = async (req: UserRequest, res: Response) => {
 //login user
 export const loginUser = (req: Request, res: Response) => {
   //login is handled in passport middleware, just send response
-  console.log(req);
   res.status(200).json({ user: req.user });
 };
 
