@@ -234,7 +234,7 @@ export const getRecommendedUsers = async (req: UserRequest, res: Response) => {
 //POST - /api/user/login
 //login user
 export const loginUser = (req: Request, res: Response) => {
-  //login handled in passport middleware, just send response
+  //login is handled in passport middleware, just send response
   res.status(200).json({ user: req.user });
 };
 
