@@ -229,7 +229,7 @@ export const handleSave = async (req: UserRequest, res: Response) => {
         //check if user has already saved the event, if yes, unsave else save
         if (
           savedEvents.length &&
-          savedEvents.find((savedEvent: ObjectId) => event._id === savedEvent)
+          savedEvents.find((savedEvent: any) => savedEvent.equals(event._id))
         ) {
           //pull event from user's saved events
           await user.updateOne(
