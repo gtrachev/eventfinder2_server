@@ -411,8 +411,8 @@ export const handleFollow = async (req: UserRequest, res: Response) => {
         const user = await User.findById(req.user._id);
         //check if user already follows account, if yes - unfollow, else follow
         if (
-          user.following.find(
-            (followedUserId: ObjectId) => account._id === followedUserId
+          user.following.find((followedUserId: any) =>
+            followedUserId.equals(account._id)
           )
         ) {
           //update current user
