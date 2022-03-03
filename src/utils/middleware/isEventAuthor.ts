@@ -2,9 +2,10 @@ import { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 import Event from "../../models/Event";
 import AppError from "../AppError";
+import { UserRequest } from "../types/modelTypes";
 
 const isEventAuthor = async (
-  req: Request,
+  req: UserRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -15,7 +16,7 @@ const isEventAuthor = async (
       const event = await Event.findById(event_id).populate("author");
       //check if user is event author, if yes return next and continue
       if (event) {
-        if (event.author === req.user) {
+        if (event.author === req.user._id) {
           return next();
         }
         return res.status(401).json({ err_message: "Not owner of the event." });

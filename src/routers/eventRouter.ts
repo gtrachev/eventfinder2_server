@@ -78,7 +78,7 @@ eventsRouter.post(
 eventsRouter.put(
   "/edit/:event_id",
   isLoggedIn,
-  isEventAuthor,
+  asyncWrap(isEventAuthor),
   isEventExpired,
   asyncWrap(eventController.editEvent)
 );
@@ -88,7 +88,7 @@ eventsRouter.put(
 eventsRouter.delete(
   "/delete/:event_id",
   isLoggedIn,
-  isEventAuthor,
+  asyncWrap(isEventAuthor),
   asyncWrap(eventController.deleteEvent)
 );
 
