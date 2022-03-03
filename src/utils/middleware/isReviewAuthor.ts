@@ -2,9 +2,10 @@ import { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 import Review from "../../models/Review";
 import AppError from "../AppError";
+import { UserRequest } from "../types/modelTypes";
 
 const isReviewAuthor = async (
-  req: Request,
+  req: UserRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -12,9 +13,9 @@ const isReviewAuthor = async (
     const { review_id = "" } = req.params;
     //validate object_id
     if (mongoose.isValidObjectId(review_id)) {
-      const review = await Review.findById(review_id).populate("author");
+      const review: any = await Review.findById(review_id).populate("author");
       if (review) {
-        if (review.author === req.user) {
+        if (review.author.equals(req.user._id)) {
           return next();
         }
         return res

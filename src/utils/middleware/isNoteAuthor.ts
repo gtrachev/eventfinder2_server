@@ -2,9 +2,10 @@ import { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 import Note from "../../models/Note";
 import AppError from "../AppError";
+import { UserRequest } from "../types/modelTypes";
 
 const isNoteAuthor = async (
-  req: Request,
+  req: UserRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -12,10 +13,10 @@ const isNoteAuthor = async (
     const { note_id = "" } = req.params;
     //validate object_id
     if (mongoose.isValidObjectId(note_id)) {
-      const note = await Note.findById(note_id).populate("author");
+      const note: any = await Note.findById(note_id);
       if (note) {
         //chek if user is note author
-        if (note.author === req.user) {
+        if (note.author.equals(req.user._id)) {
           return next();
         }
         return res.status(401).json({ message: "Not owner of the note." });

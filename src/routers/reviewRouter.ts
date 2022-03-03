@@ -24,7 +24,7 @@ reviewsRouter.post(
 reviewsRouter.delete(
   "/delete/:review_id",
   isLoggedIn,
-  isReviewAuthor,
+  asyncWrap(isReviewAuthor),
   asyncWrap(reviewController.deleteReview)
 );
 

@@ -22,7 +22,7 @@ notesRouter.post(
 notesRouter.delete(
   "/delete/:note_id",
   isLoggedIn,
-  isNoteAuthor,
+  asyncWrap(isNoteAuthor),
   asyncWrap(notesController.deleteNote)
 );
 
