@@ -174,8 +174,8 @@ export const handleAttend = async (req: UserRequest, res: Response) => {
         //check if user is attending event, if yes unattend, else attend
         if (
           attendingEvents.length &&
-          attendingEvents.find(
-            (attendingEvent: ObjectId) => event._id === attendingEvent
+          attendingEvents.find((attendingEvent: any) =>
+            attendingEvent.equals(event._id)
           )
         ) {
           //pull event from current user's attending events
