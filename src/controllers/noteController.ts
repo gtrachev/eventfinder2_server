@@ -57,9 +57,7 @@ export const handleLike = async (req: UserRequest, res: Response) => {
       if (note) {
         const user = await User.findById(req.user._id);
         //check if user has liked the note, if yes, unlike, else like
-        if (
-          note.likedBy.find((userLiked: any) => userLiked._id === user._id)
-        ) {
+        if (note.likedBy.find((userLiked: any) => userLiked.equals(user._id))) {
           //pull current user from note likedBy field
           await note.updateOne(
             { $pull: { likedBy: req.user._id } },
