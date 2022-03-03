@@ -13,10 +13,10 @@ const isEventAuthor = async (
     const { event_id } = req.params;
     //validate object_id
     if (mongoose.isValidObjectId(event_id)) {
-      const event = await Event.findById(event_id).populate("author");
+      const event: any = await Event.findById(event_id).populate("author");
       //check if user is event author, if yes return next and continue
       if (event) {
-        if (event.author === req.user._id) {
+        if (event.author.equals(req.user._id)) {
           return next();
         }
         return res.status(401).json({ err_message: "Not owner of the event." });
