@@ -5,9 +5,13 @@ if (process.env.NODE_ENV !== "production") {
 import express, { Application, Request, Response, NextFunction } from "express";
 const app: Application = express();
 const httpServer = require("http").createServer(app);
+const origin =
+  process.env.NODE_ENV !== "production"
+    ? "https://eventfinder2.herokuapp.com"
+    : "http://localhost:3001";
 const io = require("socket.io")(httpServer, {
   cors: {
-    origin: "http://localhost:3001",
+    origin,
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -44,7 +48,7 @@ db.once("open", () => {
 
 //configure cors
 app.set("trust proxy", 1);
-app.use(cors({ credentials: true, origin: "http://localhost:3001" }));
+app.use(cors({ credentials: true, origin }));
 
 //configure req.body
 app.use(express.urlencoded({ extended: true }));
