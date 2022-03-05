@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import { MessageType } from "../utils/types/modelTypes";
 const Schema = mongoose.Schema;
+import { MessageType } from "../utils/types/modelTypes";
 
 const msgSchema = new Schema<MessageType>(
   {
