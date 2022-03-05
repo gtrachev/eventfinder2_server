@@ -7,8 +7,8 @@ const app: Application = express();
 const httpServer = require("http").createServer(app);
 const origin =
   process.env.NODE_ENV !== "production"
-    ? "https://eventfinder2.herokuapp.com"
-    : "http://localhost:3001";
+    ? "http://localhost:3001"
+    : "https://eventfinder2.herokuapp.com";
 const io = require("socket.io")(httpServer, {
   cors: {
     origin,
