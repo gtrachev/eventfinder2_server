@@ -15,5 +15,5 @@ export const validateBodyData = (
     return next();
   }
   const err_message = error.details.map((el) => el.message).join(", ");
-  res.status(200).json({ err_message });
+  res.status(400).json({ err_message });
 };
