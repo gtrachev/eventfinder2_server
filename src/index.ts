@@ -33,8 +33,8 @@ import postsRouter from "./routers/postRouter";
 import notesRouter from "./routers/noteRouter";
 import eventsRouter from "./routers/eventRouter";
 import chatsRouter from "./routers/chatRouter";
-import Message from "./models/Message";
 import Chat from "./models/Chat";
+import Message from "./models/Message";
 import { ChatType, MessageType } from "./utils/types/modelTypes";
 
 //connect to database
