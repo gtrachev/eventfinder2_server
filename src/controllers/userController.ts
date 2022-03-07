@@ -253,105 +253,108 @@ export const registerUser = async (req: Request, res: Response) => {
       userTier,
       profileImage,
     } = req.body;
-
-    //if userTier is free, register normally, else proceed to stripe payment
-    if (
-      userTier === UserTiersTypes.standard ||
-      userTier === UserTiersTypes.creator
-    ) {
-      //function to respond to client based on stripe intent
-      const generateResponse = async (intent: any) => {
-        if (
-          intent.status === "requires_action" &&
-          intent.next_action.type === "use_stripe_sdk"
-        ) {
-          // Tell the client to handle the action
-          res.status(200).json({
-            requires_action: true,
-            payment_intent_client_secret: intent.client_secret,
-          });
-        } else if (intent.status === "succeeded") {
-          // Handle post-payment fulfillment
-          //create and register new user
-          const registeredUser: HydratedDocument<UserType> =
-            await User.register(
-              {
-                username,
-                password,
-                age,
-                country,
-                city,
-                interests,
-                email,
-                userTier,
-                profileImage,
-              },
-              password
+    if (!(await User.findOne({ email }))) {
+      //if userTier is free, register normally, else proceed to stripe payment
+      if (
+        userTier === UserTiersTypes.standard ||
+        userTier === UserTiersTypes.creator
+      ) {
+        //function to respond to client based on stripe intent
+        const generateResponse = async (intent: any) => {
+          if (
+            intent.status === "requires_action" &&
+            intent.next_action.type === "use_stripe_sdk"
+          ) {
+            // Tell the client to handle the action
+            res.status(200).json({
+              requires_action: true,
+              payment_intent_client_secret: intent.client_secret,
+            });
+          } else if (intent.status === "succeeded") {
+            // Handle post-payment fulfillment
+            //create and register new user
+            const registeredUser: HydratedDocument<UserType> =
+              await User.register(
+                {
+                  username,
+                  password,
+                  age,
+                  country,
+                  city,
+                  interests,
+                  email,
+                  userTier,
+                  profileImage,
+                },
+                password
+              );
+            //login new user
+            req.login(registeredUser, (err) => {
+              if (err) {
+                throw new AppError("There was a problem logging you in.", 500);
+              } else {
+                res.status(200).json({ success: true, user: registeredUser });
+              }
+            });
+          } else {
+            res.status(500).json({
+              error: "Invalid PaymentIntent status",
+            });
+          }
+        };
+        try {
+          let intent;
+          if (req.body.payment_method_id) {
+            // Create the PaymentIntent
+            intent = await stripe.paymentIntents.create({
+              payment_method: req.body.payment_method_id,
+              //amount must be in cents not dollars (2000 = 20$, 5000 = 50$)
+              amount: userTier === "standard" ? 2000 : 5000,
+              currency: "usd",
+              confirmation_method: "manual",
+              confirm: true,
+            });
+          } else if (req.body.payment_intent_id) {
+            intent = await stripe.paymentIntents.confirm(
+              req.body.payment_intent_id
             );
-          //login new user
-          req.login(registeredUser, (err) => {
-            if (err) {
-              throw new AppError("There was a problem logging you in.", 500);
-            } else {
-              res.status(200).json({ success: true, user: registeredUser });
-            }
-          });
-        } else {
-          res.status(500).json({
-            error: "Invalid PaymentIntent status",
-          });
+          }
+          // Send the response to the client
+          generateResponse(intent);
+        } catch (e: any) {
+          // Display error on client
+          return res.status(500).json({ err_message: e.message });
         }
-      };
-      try {
-        let intent;
-        if (req.body.payment_method_id) {
-          // Create the PaymentIntent
-          intent = await stripe.paymentIntents.create({
-            payment_method: req.body.payment_method_id,
-            //amount must be in cents not dollars (2000 = 20$, 5000 = 50$)
-            amount: userTier === "standard" ? 2000 : 5000,
-            currency: "usd",
-            confirmation_method: "manual",
-            confirm: true,
-          });
-        } else if (req.body.payment_intent_id) {
-          intent = await stripe.paymentIntents.confirm(
-            req.body.payment_intent_id
-          );
-        }
-        // Send the response to the client
-        generateResponse(intent);
-      } catch (e: any) {
-        // Display error on client
-        return res.status(500).json({ err_message: e.message });
+      } else {
+        //create and register new user
+        const registeredUser: HydratedDocument<UserType> = await User.register(
+          {
+            username,
+            password,
+            age,
+            country,
+            city,
+            interests,
+            email,
+            userTier,
+            profileImage,
+          },
+          password
+        );
+
+        //login new user
+        req.login(registeredUser, (err) => {
+          if (err) {
+            res
+              .status(400)
+              .json({ err_message: "There was a problem logging you in." });
+          } else {
+            res.status(200).json({ user: registeredUser });
+          }
+        });
       }
     } else {
-      //create and register new user
-      const registeredUser: HydratedDocument<UserType> = await User.register(
-        {
-          username,
-          password,
-          age,
-          country,
-          city,
-          interests,
-          email,
-          userTier,
-          profileImage,
-        },
-        password
-      );
-
-      //login new user
-      req.login(registeredUser, (err) => {
-        if (err) {
-          res
-            .status(400)
-            .json({ err_message: "There was a problem logging you in." });
-        } else {
-          res.status(200).json({ user: registeredUser });
-        }
-      });
+      res.status(200).json({ err_message: "Email not available." });
     }
   } catch (err) {
     throw new AppError("There was a problem.", 500);
